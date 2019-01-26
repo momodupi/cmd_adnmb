@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import re
 
 class thread:
-    def __init__(self, id, info, t_content):
+    def __init__(self, id, info, t_content, t_tips, rpy_list):
         self.id = id
 
         self.title = info.get("title")
@@ -17,40 +17,120 @@ class thread:
         self.uid = info.get("uid")
 
         self.t_content = t_content
+        self.t_tips = t_tips
+        self.rpy_list = rpy_list
 
     def disp_thread(self):
-        str = "{} {} {} {} {}".format(self.id, self.title, self.email, self.createdat, self.uid)
-        print(str)
-        print("----\r")
+        print("---------------------------------\n")
+        title_str = "\033[4;36m{} {} {} {} {}\033[0m \n".format(self.id, self.title, self.email, self.createdat, self.uid)
+        print(title_str)
         #nob_c = re.sub('(^\s*)','', self.t_content) 
-        nob_c = self.t_content.lstrip()
+        nob_c = "\033[1;37m{}\033[0m \n".format(self.t_content.lstrip())
         print(nob_c)
+        tp_str = "\033[4;34m{}\033[0m \n".format(self.t_tips)
+        print(tp_str)
 
-        print("---------------------------------\r\n")
+        if len(self.rpy_list): 
+            for r in self.rpy_list:
+                rpy_str = "\033[4;36m{} {} {} {} {}\033[0m \n".format(r.get("id"), r.get("title"), r.get("email"), r.get("createdat"), r.get("uid"))
+                print(rpy_str)
+                #nob_c = re.sub('(^\s*)','', self.t_content) 
+                rpy_c = "\033[0;37m{}\033[0m \n".format(r.get("content").strip())
+                print(rpy_c)
+        else:
+            pass
+        print("---------------------------------\n")
         
 
+def get_thread(t_menu):
+    url = "https://adnmb1.com{}".format(t_menu)
+    html = requests.get(url).text
+
+    thd_soup = BeautifulSoup(html,'lxml')
+    
+    thread_list = []
+
+    for thd in thd_soup.find_all('div', class_='h-threads-item uk-clearfix'):
+        id = thd.find('a', class_='h-threads-info-id').get_text()
+        info = {
+            "title": thd.find('span', class_='h-threads-info-title').get_text(),
+            "email": thd.find('span', class_='h-threads-info-email').get_text(),
+            "createdat": thd.find('span', class_='h-threads-info-createdat').get_text(),
+            "uid": thd.find('span', class_='h-threads-info-uid').get_text()
+        }
+        t_content =  thd.find('div', class_='h-threads-content').get_text()
+
+        thread_tips = thd.find('span', class_='warn_txt2')
+        if thread_tips != None:
+            t_tips = thread_tips.get_text()
+        else:
+            t_tips = ""
+
+        rpy_list = []
+
+        thd_rpy = thd.find('div', class_='h-threads-item-replys')
+        if thd_rpy != None:
+            for rpy in thd.find_all('div', class_='h-threads-item-reply'):
+                rpy_id = rpy.find('a', class_='h-threads-info-id').get_text()
+                rpy_content = {
+                    "id": rpy_id,
+                    "title": rpy.find('span', class_='h-threads-info-title').get_text(),
+                    "email": rpy.find('span', class_='h-threads-info-email').get_text(),
+                    "createdat": rpy.find('span', class_='h-threads-info-createdat').get_text(),
+                    "uid": rpy.find('span', class_='h-threads-info-uid').get_text(),
+                    "content": rpy.find('div', class_='h-threads-content').get_text()
+                }
+                rpy_list.append(rpy_content)
+        else:
+            t_tips = ""
+
+        thread_list.append( thread(id, info, t_content, t_tips, rpy_list) )
 
 
-url = "https://adnmb1.com/f/%E6%97%B6%E9%97%B4%E7%BA%BF"
-html = requests.get(url).text
+    for t in thread_list:
+        t.disp_thread()
 
-soup = BeautifulSoup(html,'lxml')
- 
-thread_list = []
 
-for link in soup.find_all('div', class_='h-threads-item uk-clearfix'):
-    #thread_list.append( thread(link.find('a', class_='h-threads-info-id').get_text()) )
+def get_menu():
+    home_url = "https://adnmb1.com/Forum"
+    home_html = requests.get(home_url).text
+    menu_soup = BeautifulSoup(home_html,'lxml')
 
-    id = link.find('a', class_='h-threads-info-id').get_text()
-    info = {
-        "title": link.find('span', class_='h-threads-info-title').get_text(),
-        "email": link.find('span', class_='h-threads-info-email').get_text(),
-        "createdat": link.find('span', class_='h-threads-info-createdat').get_text(),
-        "uid": link.find('span', class_='h-threads-info-uid').get_text()
-    }
-    t_content =  link.find('div', class_='h-threads-content').get_text()
+    menu_list = []
 
-    thread_list.append( thread(id, info, t_content) )
+    for t_href in menu_soup.find_all('ul', class_='uk-nav-sub'):
+        for t_menu in t_href.find_all('a'):
+            menu_info = {
+                "title": t_menu.get_text().strip(),
+                "href": t_menu.get('href')
+            }
+            menu_list.append(menu_info)
 
-for t in thread_list:
-    t.disp_thread()
+    return menu_list
+
+
+            
+
+
+
+def main():
+
+    m_list = get_menu()
+
+    cnt = 0
+    for l in m_list:
+        cnt = cnt+1
+        l_str = "\033[1;36m{}. {}\033[0m ".format(cnt, l.get('title'))
+        print(l_str)
+
+    print("Please Select the board: ")
+    Chn = input()
+
+    l_str = "\033[0;34m{}\033[0m ".format(m_list[int(Chn)-1].get('title'))
+    print(l_str)
+    
+    get_thread(m_list[int(Chn)-1].get('href'))
+
+
+if __name__ == "__main__":
+    main()
