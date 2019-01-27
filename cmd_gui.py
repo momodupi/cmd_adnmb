@@ -15,23 +15,7 @@ def gui_disp_menu(m_list, pos):
 
     pad = curses.newpad(m_l, m_c)
     editwin = curses.newwin(5, 30, 2, 1)
-    '''
-    n_of_col = int(len(m_list)/(m_l - 2))+1
 
-    cnt = 0
-    for l in m_list:
-        l_str = "{}. {}".format(cnt+1, l.get('title'))
-        pad.addstr(int(cnt%m_l), int(int(cnt/m_l)*m_c/n_of_col), l_str)
-        cnt = cnt+1
-
-    # Displays a section of the pad in the middle of the screen.
-    # (0,0) : coordinate of upper-left corner of pad area to display.
-    # (5,5) : coordinate of upper-left corner of window area to be filled
-    #         with pad content.
-    # (20, 75) : coordinate of lower-right corner of window area to be
-    #          : filled with pad content.
-    pad.refresh(0,0, 2,0, curses.LINES-1, curses.COLS)
-    '''
     l_page = []
     for i in range(0, total_page+1):
         l_page.append([])
