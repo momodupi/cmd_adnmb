@@ -19,6 +19,24 @@ class thread:
         self.t_content = t_content
         self.t_tips = t_tips
         self.rpy_list = rpy_list
+    
+    def disp_info(self):
+        return "{} {} {} {} {}".format(self.id, self.title, self.email, self.createdat, self.uid)
+
+    def disp_content(self):
+        return "{}".format(self.t_content.lstrip())
+
+    def disp_reply(self):
+        r_str = ""
+        if len(self.rpy_list): 
+            for r in self.rpy_list:
+                rpy_info = "{} {} {} {} {}\n".format(r.get("id"), r.get("title"), r.get("email"), r.get("createdat"), r.get("uid"))
+                
+                rpy_c = "{}\n".format(r.get("content").strip())
+                r_str = r_str + rpy_info + rpy_c
+        else:
+            pass
+        return r_str
 
     def disp_thread(self):
         print("---------------------------------\n")
@@ -85,10 +103,11 @@ def get_thread(t_menu):
             t_tips = ""
 
         thread_list.append( thread(id, info, t_content, t_tips, rpy_list) )
-
-
+    '''
     for t in thread_list:
         t.disp_thread()
+    '''
+    return thread_list
 
 
 def get_menu():
@@ -108,29 +127,3 @@ def get_menu():
 
     return menu_list
 
-
-            
-
-
-
-def main():
-
-    m_list = get_menu()
-
-    cnt = 0
-    for l in m_list:
-        cnt = cnt+1
-        l_str = "\033[1;36m{}. {}\033[0m ".format(cnt, l.get('title'))
-        print(l_str)
-
-    print("Please Select the board: ")
-    Chn = input()
-
-    l_str = "\033[0;34m{}\033[0m ".format(m_list[int(Chn)-1].get('title'))
-    print(l_str)
-    
-    get_thread(m_list[int(Chn)-1].get('href'))
-
-
-if __name__ == "__main__":
-    main()
