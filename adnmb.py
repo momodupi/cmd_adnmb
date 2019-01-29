@@ -24,7 +24,7 @@ class thread:
         return "{} {} {} {} {}".format(self.id, self.title, self.email, self.createdat, self.uid)
 
     def disp_content(self):
-        return "{}".format(self.t_content.lstrip())
+        return "{}".format(self.t_content.strip())
 
     def disp_reply(self):
         r_str = ""
@@ -60,8 +60,8 @@ class thread:
         print("---------------------------------\n")
         
 
-def get_thread(t_menu):
-    url = "https://adnmb1.com{}".format(t_menu)
+def get_thread(t_menu, page):
+    url = "https://adnmb1.com{}?page={}".format(t_menu, int(page))
     html = requests.get(url).text
 
     thd_soup = BeautifulSoup(html,'lxml')
