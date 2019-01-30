@@ -38,6 +38,10 @@ class thread:
             pass
         return r_str
 
+    def get_reply_num(self):
+        return len(self.rpy_list)
+
+
     def disp_thread(self):
         print("---------------------------------\n")
         title_str = "\033[4;36m{} {} {} {} {}\033[0m \n".format(self.id, self.title, self.email, self.createdat, self.uid)
