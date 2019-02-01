@@ -131,3 +131,51 @@ def get_menu():
 
     return menu_list
 
+def get_reply(page):
+    url = "https://adnmb1.com/t/{}?page={}".format(t_menu, int(page))
+    html = requests.get(url).text
+
+    thd_soup = BeautifulSoup(html,'lxml')
+    
+    thread_list = []
+
+    for thd in thd_soup.find_all('div', class_='h-threads-item uk-clearfix'):
+        id = thd.find('a', class_='h-threads-info-id').get_text()
+        info = {
+            "title": thd.find('span', class_='h-threads-info-title').get_text(),
+            "email": thd.find('span', class_='h-threads-info-email').get_text(),
+            "createdat": thd.find('span', class_='h-threads-info-createdat').get_text(),
+            "uid": thd.find('span', class_='h-threads-info-uid').get_text()
+        }
+        t_content =  thd.find('div', class_='h-threads-content').get_text()
+
+        thread_tips = thd.find('span', class_='warn_txt2')
+        if thread_tips != None:
+            t_tips = thread_tips.get_text()
+        else:
+            t_tips = ""
+
+        rpy_list = []
+
+        thd_rpy = thd.find('div', class_='h-threads-item-replys')
+        if thd_rpy != None:
+            for rpy in thd.find_all('div', class_='h-threads-item-reply'):
+                rpy_id = rpy.find('a', class_='h-threads-info-id').get_text()
+                rpy_content = {
+                    "id": rpy_id,
+                    "title": rpy.find('span', class_='h-threads-info-title').get_text(),
+                    "email": rpy.find('span', class_='h-threads-info-email').get_text(),
+                    "createdat": rpy.find('span', class_='h-threads-info-createdat').get_text(),
+                    "uid": rpy.find('span', class_='h-threads-info-uid').get_text(),
+                    "content": rpy.find('div', class_='h-threads-content').get_text()
+                }
+                rpy_list.append(rpy_content)
+        else:
+            t_tips = ""
+
+        thread_list.append( thread(id, info, t_content, t_tips, rpy_list) )
+    '''
+    for t in thread_list:
+        t.disp_thread()
+    '''
+    return thread_list

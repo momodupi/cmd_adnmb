@@ -44,7 +44,6 @@ def gui_disp_menu(m_list, pos):
     total_page = int(len(m_list)/(m_l-2))+1
 
     pad = curses.newpad(m_l, m_c)
-    #editwin = curses.newwin(m_l, int(m_c/total_page), 2, 1)
 
     cnt = 0
     for l in m_list:
@@ -60,16 +59,20 @@ def gui_disp_menu(m_list, pos):
 
 
 def gui_menu_interface(stdscr, m_list):
+    stdscr.clear()
+    stdscr.addstr(0, 0, "A岛匿名版", curses.A_BOLD + curses.color_pair(2))
+    stdscr.refresh()
+
     Chn = 1
     while True:
         gui_disp_menu(m_list, Chn)
 
         i_key = stdscr.getkey()
-        if i_key == 'KEY_UP':
+        if i_key == 'KEY_UP' or i_key == 'i':
             Chn = Chn - 1
-        elif i_key == 'KEY_DOWN':
+        elif i_key == 'KEY_DOWN' or i_key == 'k':
             Chn = Chn + 1
-        elif i_key == 'KEY_RIGHT':
+        elif i_key == 'KEY_RIGHT' or i_key == 'l':
             break
 
         if Chn <= 0:
@@ -84,8 +87,9 @@ def gui_menu_interface(stdscr, m_list):
 
 
 def gui_display_thread(stdscr, title, t_list, pos, page):
+    stdscr.clear()
     stdscr.addstr(0, 0, title, curses.A_BOLD + curses.color_pair(2))
-    stdscr.addstr(0, 12, "{:03}/{:03}".format(int(pos),int(page)), curses.A_BOLD + curses.color_pair(2))
+    stdscr.addstr(0, 16, "{:03}/{:03}".format(int(pos),int(page)), curses.A_BOLD + curses.color_pair(2))
     stdscr.refresh()
 
     m_l = curses.LINES - 4
@@ -115,7 +119,7 @@ def gui_display_thread(stdscr, title, t_list, pos, page):
             pad_r.addstr(str_pos+1, 0, rpy_content, curses.A_NORMAL)
             str_pos = str_pos + str_len + 2
 
-        pad_r.refresh(0, 0, 2, m_c+2, curses.LINES-1, curses.COLS - 4)
+        pad_r.refresh(0, 0, 2, m_c+4, curses.LINES-1, curses.COLS - 4)
 
 '''
 def gui_display_reply(stdscr, r_list, pos, page):
@@ -147,8 +151,8 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
 
     # set title
-    stdscr.addstr(0, 0, "A岛匿名版", curses.A_BOLD + curses.color_pair(2))
-    stdscr.refresh()
+    #stdscr.addstr(0, 0, "A岛匿名版", curses.A_BOLD + curses.color_pair(2))
+    #stdscr.refresh()
 
     # request borad nav
     m_list = adnmb.get_menu()
@@ -215,14 +219,22 @@ def main(stdscr):
         #pad.refresh(Thd_pos,0, 2,0, curses.LINES-1, m_c)
 
         i_key = stdscr.getkey()
-        if i_key == 'KEY_UP':
+        if i_key == 'KEY_UP' or i_key == 'i':
             Thd_pos = Thd_pos - 1
-        elif i_key == 'KEY_DOWN':
+            a = 1
+        elif i_key == 'KEY_DOWN' or i_key == 'k':
             Thd_pos = Thd_pos + 1
-        elif i_key == 'KEY_LEFT':
+            a = 1
+        elif i_key == 'KEY_LEFT' or i_key == 'j':
             Chn, t_list = gui_menu_interface(stdscr, m_list)
-        elif i_key == 'KEY_RIGHT':
-            a=1
+        elif i_key == 'KEY_RIGHT' or i_key == 'l':
+            a = 1
+        elif i_key == 'KEY_PPAGE' or i_key == 'n':
+            #Thd_pos = Thd_pos - 1
+            a = 1
+        elif i_key == 'KEY_NPAGE' or i_key == 'm':
+            #Thd_pos = Thd_pos + 1
+            a = 1
         else:
             break
 
