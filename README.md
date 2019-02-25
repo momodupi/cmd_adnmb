@@ -1,5 +1,5 @@
 # cmd_adnmb
-A terminal based application for
+A terminal based application for
 [A land](https://adnmb1.com/Forum).
 
 ## Install
