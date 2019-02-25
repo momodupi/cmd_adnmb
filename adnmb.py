@@ -65,7 +65,7 @@ class thread:
         
 
 def get_thread(t_menu, page):
-    url = "https://adnmb1.com{}?page={}".format(t_menu, int(page))
+    url = "https://adnmb.com{}?page={}".format(t_menu, int(page))
     html = requests.get(url).text
 
     thd_soup = BeautifulSoup(html,'lxml')
@@ -115,7 +115,7 @@ def get_thread(t_menu, page):
 
 
 def get_menu():
-    home_url = "https://adnmb1.com/Forum"
+    home_url = "https://adnmb.com/Forum"
     home_html = requests.get(home_url).text
     menu_soup = BeautifulSoup(home_html,'lxml')
 
@@ -131,8 +131,8 @@ def get_menu():
 
     return menu_list
 
-def get_reply(page):
-    url = "https://adnmb1.com/t/{}?page={}".format(t_menu, int(page))
+def get_reply(t_menu, page):
+    url = "https://adnmb.com/t/{}?page={}".format(t_menu, int(page))
     html = requests.get(url).text
 
     thd_soup = BeautifulSoup(html,'lxml')
