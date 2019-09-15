@@ -1,6 +1,6 @@
 # cmd_adnmb
 A terminal based application for
-[A land](https://adnmb1.com/Forum).
+[A land](https://adnmb.com/Forum).
 
 ## Install
 Just need Python(＾o＾)ﾉ
